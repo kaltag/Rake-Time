@@ -1,0 +1,50 @@
+class Format
+  attr_reader :errors
+
+  TIME_METHODS = {
+    year: '%Y',
+    month: '%m',
+    day: '%d',
+    hour: '%H',
+    minute: '%M',
+    second: '%S'
+  }.freeze
+
+  ALLOW_FORMAT = %w[year month day hour minute second].freeze
+
+  def initialize(query)
+    @time_formats = parse(query)
+    @errors = []
+    validate_format!
+  end
+
+  def body
+    if @errors.empty?
+      success
+    else
+      falure
+    end
+  end
+
+  private
+
+  def parse(query)
+    query.split('=')[-1].split('%2C')
+  end
+
+  def validate_format!
+    @time_formats.map { |format| @errors << format unless ALLOW_FORMAT.include?(format) }
+  end
+
+  def falure
+    ["Unknown time format [#{@errors.join(', ')}]"]
+  end
+
+  def success
+    Time.now.strftime(split_format)
+  end
+
+  def split_format
+    @time_formats.map { |format| TIME_METHODS[format.to_sym] }.join('-')
+  end
+end
