@@ -1,5 +1,4 @@
 class Format
-  attr_reader :errors
 
   TIME_METHODS = {
     'year' => '%Y',
@@ -17,11 +16,15 @@ class Format
   end
 
   def body
-    if @errors.empty?
+    if success?
       success
     else
       falure
     end
+  end
+
+  def success?
+    @errors.empty?
   end
 
   private

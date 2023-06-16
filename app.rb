@@ -7,7 +7,7 @@ class App
   private
 
   def status
-    @params.errors.empty? ? 200 : 400
+    @params.success? ? 200 : 400
   end
 
   def headers
