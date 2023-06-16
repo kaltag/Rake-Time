@@ -2,15 +2,13 @@ class Format
   attr_reader :errors
 
   TIME_METHODS = {
-    year: '%Y',
-    month: '%m',
-    day: '%d',
-    hour: '%H',
-    minute: '%M',
-    second: '%S'
+    'year' => '%Y',
+    'month' => '%m',
+    'day' => '%d',
+    'hour' => '%H',
+    'minute' => '%M',
+    'second' => '%S'
   }.freeze
-
-  ALLOW_FORMAT = %w[year month day hour minute second].freeze
 
   def initialize(query)
     @time_formats = parse(query)
@@ -33,7 +31,7 @@ class Format
   end
 
   def validate_format!
-    @time_formats.map { |format| @errors << format unless ALLOW_FORMAT.include?(format) }
+    @time_formats.map { |format| @errors << format unless TIME_METHODS.keys.include?(format) }
   end
 
   def falure
@@ -41,10 +39,10 @@ class Format
   end
 
   def success
-    Time.now.strftime(split_format)
+    [Time.now.strftime(split_format)]
   end
 
   def split_format
-    @time_formats.map { |format| TIME_METHODS[format.to_sym] }.join('-')
+    @time_formats.map { |format| TIME_METHODS[format] }.join('-')
   end
 end
