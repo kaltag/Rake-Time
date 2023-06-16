@@ -1,20 +1,21 @@
 class App
   def call(env)
-    @params = Format.new(env['QUERY_STRING'])
-    [status, headers, body]
+    request = Rack::Request.new(env)
+    time = Format.new(request.params)
+    if time.success?
+      response(200, time.body)
+    else
+      response(400, time.body)
+    end
   end
 
   private
 
-  def status
-    @params.success? ? 200 : 400
-  end
-
-  def headers
-    { 'Content-Type' => 'text/plain' }
-  end
-
-  def body
-    @params.body
+  def response(status, body)
+    [
+      status,
+      { 'Content-Type' => 'text/plain' },
+      [body]
+    ]
   end
 end

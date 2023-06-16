@@ -1,5 +1,4 @@
 class Format
-
   TIME_METHODS = {
     'year' => '%Y',
     'month' => '%m',
@@ -13,7 +12,7 @@ class Format
     @time_formats = parse(query)
     @errors = []
     @text_format = []
-    validate_format!
+    call!
   end
 
   def body
@@ -31,10 +30,10 @@ class Format
   private
 
   def parse(query)
-    query.split('=')[-1].split('%2C')
+    query['format'].split(',')
   end
 
-  def validate_format!
+  def call!
     @time_formats.map do |format|
       @errors << format unless TIME_METHODS.keys.include?(format)
       @text_format << TIME_METHODS[format]
@@ -42,11 +41,10 @@ class Format
   end
 
   def falure
-    ["Unknown time format [#{@errors.join(', ')}]"]
+    "Unknown time format [#{@errors.join(', ')}]"
   end
 
   def success
-    [Time.now.strftime(@text_format.join('-'))]
+    Time.now.strftime(@text_format.join('-'))
   end
-
 end
