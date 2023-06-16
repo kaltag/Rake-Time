@@ -12,6 +12,7 @@ class Format
   def initialize(query)
     @time_formats = parse(query)
     @errors = []
+    @text_format = []
     validate_format!
   end
 
@@ -34,7 +35,10 @@ class Format
   end
 
   def validate_format!
-    @time_formats.map { |format| @errors << format unless TIME_METHODS.keys.include?(format) }
+    @time_formats.map do |format|
+      @errors << format unless TIME_METHODS.keys.include?(format)
+      @text_format << TIME_METHODS[format]
+    end
   end
 
   def falure
@@ -42,10 +46,7 @@ class Format
   end
 
   def success
-    [Time.now.strftime(split_format)]
+    [Time.now.strftime(@text_format.join('-'))]
   end
 
-  def split_format
-    @time_formats.map { |format| TIME_METHODS[format] }.join('-')
-  end
 end
