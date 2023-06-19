@@ -12,7 +12,6 @@ class Format
     @time_formats = parse(query)
     @errors = []
     @text_format = []
-    call!
   end
 
   def body
@@ -27,17 +26,20 @@ class Format
     @errors.empty?
   end
 
+  def call!
+    @time_formats.map do |format|
+      if TIME_METHODS[format]
+        @text_format << TIME_METHODS[format]
+      else
+        @errors << format
+      end
+    end
+  end
+
   private
 
   def parse(query)
     query['format'].split(',')
-  end
-
-  def call!
-    @time_formats.map do |format|
-      @errors << format unless TIME_METHODS.keys.include?(format)
-      @text_format << TIME_METHODS[format]
-    end
   end
 
   def falure
