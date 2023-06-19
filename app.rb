@@ -2,20 +2,11 @@ class App
   def call(env)
     request = Rack::Request.new(env)
     time = Format.new(request.params)
-    if time.success?
-      response(200, time.body)
-    else
-      response(400, time.body)
-    end
-  end
-
-  private
-
-  def response(status, body)
-    [
-      status,
-      { 'Content-Type' => 'text/plain' },
-      [body]
-    ]
+    response = if time.success?
+                 Rack::Response.new(time.body, 200, { 'Content-Type' => 'text/plain' })
+               else
+                 Rack::Response.new(time.body, 400, { 'Content-Type' => 'text/plain' })
+               end
+    response.finish
   end
 end
